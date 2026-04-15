@@ -401,11 +401,12 @@ void setup()
 
 void loop()
 {
-    const uint32_t now = millis();
-    handleSwitchChange(readSwitchState(), now);
+    handleSwitchChange(readSwitchState(), millis());
 
     if (paused)
     {
+        const uint32_t now = millis();
+
         if (pauseStartedMs != 0 && now - pauseStartedMs >= PAUSE_RESET_MS)
         {
             resetTotal();
@@ -416,8 +417,16 @@ void loop()
 
     if (atBackWall)
     {
-        while (!paused && atBackWall && now - lastInactivityMs >= INACTIVITY_MS)
+        while (!paused && atBackWall)
         {
+            const uint32_t now = millis();
+            handleSwitchChange(readSwitchState(), now);
+
+            if (paused || !atBackWall || now - lastInactivityMs < INACTIVITY_MS)
+            {
+                break;
+            }
+
             lastInactivityMs += INACTIVITY_MS;
 
             if (backWallDefender() == Player::Red)
@@ -442,8 +451,16 @@ void loop()
 
     bool moved = false;
 
-    while (!paused && !atBackWall && now - lastMoveMs >= stepDelayMs)
+    while (!paused && !atBackWall)
     {
+        const uint32_t now = millis();
+        handleSwitchChange(readSwitchState(), now);
+
+        if (paused || atBackWall || now - lastMoveMs < stepDelayMs)
+        {
+            break;
+        }
+
         lastMoveMs += stepDelayMs;
         ballPos += ballDir;
         moved = true;
