@@ -38,7 +38,7 @@ enum class Player : uint8_t
     Green,
 };
 
-NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> strip(NUM_LEDS, DATA_PIN);
+NeoPixelBus<NeoGrbFeature, NeoEsp32Rmt0Ws2812Method> strip(NUM_LEDS, DATA_PIN);
 
 uint8_t redZone = START_ZONE;
 uint8_t greenZone = START_ZONE;
