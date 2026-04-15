@@ -18,6 +18,7 @@ constexpr uint32_t INACTIVITY_MS = 1000;
 constexpr uint32_t PAUSE_RESET_MS = 10000;
 constexpr uint32_t POINT_FLASH_MS = 80;
 constexpr uint32_t WIN_FLASH_MS = 180;
+constexpr long RANDOM_TWO_OUTCOMES = 2;
 
 const RgbColor COLOR_OFF(0, 0, 0);
 const RgbColor COLOR_RED(255, 0, 0);
@@ -177,7 +178,8 @@ void flashStrip(const RgbColor& color, uint32_t durationMs)
 void reverseBall(uint32_t now)
 {
     ballDir = -ballDir;
-    stepDelayMs = stepDelayMs > MIN_STEP_MS ? max(MIN_STEP_MS, stepDelayMs - SPEEDUP_MS) : MIN_STEP_MS;
+    const uint32_t nextDelay = stepDelayMs > SPEEDUP_MS ? stepDelayMs - SPEEDUP_MS : 0;
+    stepDelayMs = max(MIN_STEP_MS, nextDelay);
     lastMoveMs = now;
     lastInactivityMs = now;
 }
@@ -189,7 +191,7 @@ void resetTotal()
     redScore = 0;
     greenScore = 0;
     ballPos = NUM_LEDS / 2;
-    ballDir = random(0, 2) == 0 ? -1 : 1;
+    ballDir = random(0, RANDOM_TWO_OUTCOMES) == 0 ? -1 : 1;
     stepDelayMs = START_STEP_MS;
     lastMoveMs = millis();
     lastInactivityMs = lastMoveMs;
@@ -242,7 +244,7 @@ bool handleVictoryIfNeeded()
         }
         else
         {
-            winner = random(0, 2) == 0 ? Player::Red : Player::Green;
+            winner = random(0, RANDOM_TWO_OUTCOMES) == 0 ? Player::Red : Player::Green;
         }
     }
 
